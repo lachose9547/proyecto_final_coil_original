@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.cuerpo {
+  background-image: url('./img/poster-tour.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-loyola {
+  width: 140px;
+  display: block;
+  margin: 0 auto 20px auto;
+  border-radius: 75%;
+  object-fit: cover;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.form-contain {
+  width: 100%;
+  max-width: 500px;
+  background: linear-gradient(to bottom, rgb(27, 43, 69), rgba(27, 43, 69, 0.9));
+ /* padding: 60px 40px;*/
+  padding: 10px 10px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-contain h1 {
+ /* font-size: 25px;*/
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: aliceblue;
+  position: relative;
+  text-align: center;
+}
+
+.form-contain h1::after {
+  content: '';
+  width: 60px;
+  height: 4px;
+  border-radius: 3px;
+  background-color: #2196F3;
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.input-field {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #2196F3;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.input-field:focus-within {
+  border-color: #FFEB3B;
+}
+
+input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 5px;
+  outline: none;
+  color: #FFFFFF;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+input:focus::placeholder {
+  color: transparent;
+}
+
+.input-field i {
+  margin-right: 10px;
+  color: #2196F3;
+  font-size: 20px;
+}
+
+#message {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 30px;
+  width: 100%;
+}
+
+.boton1, .boton2 {
+  background-color: #2196F3;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  padding: 12px 30px;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  flex-grow: 1;
+  max-width: 150px;
+}
+
+.boton1:hover, .boton2:hover {
+  background-color: #FFEB3B;
+  color: #2e3c54;
+  transform: translateY(-3px);
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 3.8rem;
+}
+
+#passwordToggle {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #2196F3;
+  font-size: 20px;
+}
+
+
+.error-message {
+  color: #FFEB3B;
+  font-size: 14px;
+  margin-top: 5px;
+  padding-left: 5px;
+  display: block;
+  min-height: 18px;
+}
+
+.input-error {
+  border-bottom-color: red !important;
+}
+
+.success-message {
+  color: #4CAF50;
+  font-size: 18px;
+  margin-top: 20px;
+  text-align: center;
+}
