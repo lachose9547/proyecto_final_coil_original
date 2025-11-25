@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Buffer } from "buffer";  
- window.Buffer = Buffer;           
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
+
 import logo_superior from "../img/logo_superior.jpeg";
 import firma11 from "../img/firma11.jpeg";
 import firma12 from "../img/firma12.jpeg";
@@ -26,23 +27,18 @@ const styles = StyleSheet.create({
     border: "8 solid #003366",
   },
   headerRow: {
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-  marginBottom: 30,
-},
-
-logo_superior: {
-  width: 100,
-  height: 75,
-  alignSelf: "center",
-    marginTop: 0,
-},
-
-
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  logo_superior: {
+    width: 100,
+    height: 75,
+    alignSelf: "center",
+  },
   body: {
     textAlign: "center",
-    marginTop: 2,
     marginHorizontal: 40,
   },
   title: {
@@ -78,25 +74,17 @@ logo_superior: {
     fontSize: 13,
     fontWeight: "bold",
   },
-  signatureImg: {
-    width: 120,
-    height: 50,
-    marginBottom: 5,
-  },
-
   firma11: {
     width: 120,
     height: 50,
-  alignSelf: "center",
-  marginTop: 5,
-  
-
-  },  
+    alignSelf: "center",
+    marginTop: 5,
+  },
   firma12: {
     width: 120,
     height: 50,
     alignSelf: "center",
-     marginTop: 5,
+    marginTop: 5,
   },
   qr: {
     width: 65,
@@ -105,35 +93,37 @@ logo_superior: {
     alignSelf: "center",
   },
   barcode: {
-    width: 100,
-    height: 50,
-    marginTop:5,
+    width: 120,
+    height: 50, 
+    marginTop: 5,
     alignSelf: "center",
   },
 });
 
 function Pdf() {
   const location = useLocation();
- const usuario = location.state?.usuario || { nombre: "", apellido: "" };
-
-
-
+  const usuario = location.state?.usuario;
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [barcodeDataUrl, setBarcodeDataUrl] = useState("");
   
 
+console.log("Usuario recibido en PDF:", usuario);
   useEffect(() => {
-    // Generar QR
-    QRCode.toDataURL("https://coil.ipl.edu.do/vista/inicio.php")
+    if (!usuario) return;
+
+    // Generar QR con enlace único al certificado (por ejemplo a tu dominio)
+    QRCode.toDataURL( `https://coil.ipl.edu.do/api/codigo=?&ciclo=?id_Usuario=${usuario.id_Usuario}&{cert.año}` )
+   
+    
       .then((url) => setQrDataUrl(url))
       .catch((err) => console.error("Error generando QR:", err));
 
-    // Generar código de barras
+    // Generar código de barras con el id_Usuario
     try {
       const canvas = document.createElement("canvas");
       bwipjs.toCanvas(canvas, {
         bcid: "code128",
-        text: String(usuario[0]?.id_Usuario || ""),
+        text: String(usuario.id_Usuario || ""),
         scale: 3,
         height: 10,
         includetext: true,
@@ -142,59 +132,61 @@ function Pdf() {
     } catch (err) {
       console.error("Error generando código de barras:", err);
     }
-  }, []);
+  }, [usuario]);
 
-  // Esperar a que QR y barcode estén generados
-  if (!qrDataUrl || !barcodeDataUrl) return null;
+  if (!usuario || !qrDataUrl || !barcodeDataUrl) return <p>Cargando certificado...</p>;
 
   return (
-    usuario?.map((user, index) => (      
-    <PDFViewer key={index} style={{ width: "100%", height: "100vh" }}>
+    <PDFViewer style={{ width: "100%", height: "100vh" }}>
       <Document>
-        <Page size="A4" orientation="landscape" style={styles.page}>
-          {/* Logos */}
-          <View style={styles.headerRow}>
-            <Image style={styles.logo_superior} src={logo_superior} />
-          </View>
+        {usuario.certificados.map((cert, index) => (
+          <Page key={index} size="A4" orientation="landscape" style={styles.page}>
+            {/* Encabezado */}
+            <View style={styles.headerRow}>
+              <Image style={styles.logo_superior} src={logo_superior} />
+            </View>
 
-          {/* Cuerpo */}
-          <View style={styles.body}>
-            <Text style={styles.title}>Otorga el presente certificado a</Text>
-            <Text style={styles.name}>{user.nombre} {user.apellido}</Text>
-            <Text style={styles.subtitle}>Por haber participado como ponente en el</Text>
-            <Text style={[styles.subtitle, { fontWeight: "bold" }]}>
-              Congreso de Ingeniería Loyola COIL {String(user.ciclo1).slice(0, 4)}
+            {/* Cuerpo */}
+            <View style={styles.body}>
+              <Text style={styles.title}>Otorga el Presente Certificado a</Text>
+              <Text style={styles.name}>
+                {usuario.nombre} {usuario.apellido}
+              </Text>
+              <Text style={styles.subtitle}>
+                Por haber participado en el  </Text>
+                <Text style={[styles.subtitle, { fontWeight: "bold" }]}>{cert.tipo_congreso}  {cert.año}
+              </Text>
+              <Text style={styles.subtitle}>{cert.tema}</Text>
+            </View>
+
+            {/* Detalles */}
+            <Text style={styles.details}>
+              Dado en la provincia de San Cristóbal, República Dominicana,{"\n"}
+              en el mes de noviembre del {cert.año}.
             </Text>
-            <Text style={styles.subtitle}>Transformación Digital</Text>
-          </View>
 
-          {/* Detalles */}
-          <Text style={styles.details}>
-            Dado en la provincia de San Cristóbal, República Dominicana,
-            {"\n"}en el mes de noviembre del {String(user.ciclo1).slice(0, 4)}
-          </Text>
+            {/* Firmas */}
+            <View style={styles.signaturesRow}>
+              <View style={styles.signatureBox}>
+                <Image style={styles.firma11} src={firma11} />
+                <Text>P. José Victoriano, S.J.</Text>
+                <Text>Rector</Text>
+                <Image style={styles.qr} src={qrDataUrl} />
+              </View>
 
-          {/* Firmas con QR y código de barras juntos */}
-          <View style={styles.signaturesRow}>
-            <View style={styles.signatureBox}>
-              <Image style={styles.firma11} src={firma11} />
-              <Text>P. José Victoriano, S.J.</Text>
-              <Text>Rector</Text>
-              <Image style={styles.qr} src={qrDataUrl} />
+              <View style={styles.signatureBox}>
+                <Image style={styles.firma12} src={firma12} />
+                <Text>Carlos Napoleón Pereira M., M.A.</Text>
+                <Text>Director de la Facultad de Ingeniería</Text>
+                <Image style={styles.barcode} src={barcodeDataUrl} />
+              </View>
             </View>
-
-            <View style={styles.signatureBox}>
-              <Image style={styles.firma12} src={firma12} />
-              <Text>Carlos Napoleón Pereira M., M.A.</Text>
-              <Text>Director de la Facultad de Ingeniería</Text>
-              <Image style={styles.barcode} src={barcodeDataUrl}  />
-            </View>
-          </View>
-        </Page>
+          </Page>
+        ))}
       </Document>
     </PDFViewer>
-    ))
   );
 }
 
 export default Pdf;
+
